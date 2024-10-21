@@ -30,11 +30,13 @@ export function measure(comment: string, startMark: string, endMark: string) {
       performance.measure(comment, startMark, endMark);
     }
   } catch (e) {
-    // eslint-disable-next-line no-console
-    console.warn(
-      'performance.measure could not be executed because of ',
-      e.message
-    );
+    if (e instanceof Error) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        'performance.measure could not be executed because of ',
+        e.message
+      );
+    }
   }
 }
 
