@@ -1,4 +1,4 @@
-import { _registerHook, HookUnregister } from '@ember/test-helpers';
+import { registerHook } from '@ember/test-helpers';
 import { InvocationStrategy, AuditFunction } from './types';
 import { getRunOptions } from './run-options';
 import a11yAudit from './audit';
@@ -24,6 +24,10 @@ type HelperName =
   | 'typeIn'
   | 'visit';
 
+interface HookUnregister {
+  unregister: () => void;
+}
+
 let _unregisterHooks: HookUnregister[] = [];
 
 export const DEFAULT_A11Y_TEST_HELPER_NAMES: HelperName[] = [
@@ -34,7 +38,7 @@ export const DEFAULT_A11Y_TEST_HELPER_NAMES: HelperName[] = [
 ];
 
 /**
- * Sets up a11yAudit calls using `@ember/test-helpers`' `_registerHook` API.
+ * Sets up a11yAudit calls using `@ember/test-helpers`' `registerHook` API.
  *
  * @param shouldAudit Invocation strategy function that determines whether to run the audit helper or not.
  * @param audit Optional audit function used to run the audit. Allows for providing either a11yAudit, a11yAuditIf,
@@ -70,7 +74,7 @@ export function setupGlobalA11yHooks(
   let helpers = options?.helpers ?? DEFAULT_A11Y_TEST_HELPER_NAMES;
 
   helpers.forEach((helperName) => {
-    let hook = _registerHook(helperName, 'end', async () => {
+    let hook = registerHook(helperName, 'end', async () => {
       if (shouldForceAudit() && shouldAudit(helperName, 'end')) {
         await audit(getRunOptions());
       }
